@@ -7,7 +7,7 @@ long_description = (here / 'README.md').read_text(encoding='utf-8')
 
 setup(
     name='scrapy-googlechat',
-    version='1.0',
+    version='1.1',
     description='Send crawl reports from Scrapy spiders to Google Chat',
     long_description=long_description,
     long_description_content_type='text/markdown',

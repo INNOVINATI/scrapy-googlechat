@@ -16,8 +16,9 @@ class GoogleChatBot(object):
 
     """
 
-    def __init__(self, url, stats):
+    def __init__(self, url, stats, image):
         self.url = url
+        self.image = image
         self.crawl_stats = stats
         self.item_stats = {'scraped': 0, 'dropped': 0, 'errors': 0}
 
@@ -25,7 +26,8 @@ class GoogleChatBot(object):
     def from_crawler(cls, crawler):
         if not (url := crawler.settings.get('GOOGLE_CHAT_WEBHOOK')):
             raise NotConfigured
-        ext = cls(url, crawler.stats)
+        image = crawler.settings.get('GOOGLE_CHAT_IMAGE', 'https://img.icons8.com/ios/452/spider.png')
+        ext = cls(url, crawler.stats, image)
         crawler.signals.connect(ext.spider_closed, signal=signals.spider_closed)
         crawler.signals.connect(ext.item_scraped, signal=signals.item_scraped)
         crawler.signals.connect(ext.item_dropped, signal=signals.item_dropped)
@@ -59,15 +61,14 @@ class GoogleChatBot(object):
         minutes, seconds = divmod(remainder, 60)
         return f"{hours}h {minutes}m {seconds}s"
 
-    @staticmethod
-    def _get_message(spider_name, stats):
+    def _get_message(self, spider_name, stats):
         return {
             'cards': [
                 {
                     'header': {
                         "title": "Spider Report",
                         "subtitle": f'Name: {spider_name}',
-                        "imageUrl": 'https://img.icons8.com/ios/452/spider.png',
+                        "imageUrl": self.image,
                         "imageStyle": "IMAGE"
                     },
                     'sections': [
